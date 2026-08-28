@@ -17,15 +17,22 @@ function getNextGeminiKey() {
 
 const DEEPSEEK_KEY = process.env.DEEPSEEK_API_KEY || '';
 
+const VISION_MODELS = [
+  'gemini-3.6-flash',
+  'gemini-3.5-flash',
+  'gemini-3.7-flash',
+  'gemini-flash-latest',
+  'gemini-2.5-pro'
+];
+
 /**
  * Analiza una captura de pantalla de boleto de apuesta usando Gemini Vision (Multimodal).
  * Extrae casa de apuestas, partido, mercado, momio, stake y ganancia potencial en JSON estructurado.
  */
-async function parseBetImageWithGemini(imageBuffer, mimeType = 'image/jpeg') {
+async function parseBetImageWithGemini(imageBuffer, mimeType = 'image/png') {
   const base64Data = imageBuffer.toString('base64');
-  const apiKey = getNextGeminiKey();
 
-  if (!apiKey) {
+  if (GEMINI_KEYS.length === 0) {
     throw new Error('No se configuraron claves de GEMINI_API_KEYS en el archivo .env');
   }
 
@@ -34,13 +41,13 @@ Tu objetivo es leer minuciosamente la captura de pantalla del boleto de apuesta 
 
 Instrucciones de Extracción:
 1. "casa_apuestas": Nombre de la casa de apuestas visible (ej. Bet365, Caliente.mx, Codere, Betano, Playdoit, 1xBet, Novibet, etc., o "Desconocido").
-2. "partido": Nombres completos de los equipos o rivales (ej. "Real Madrid vs Barcelona", "Chivas vs América", "New York Yankees vs Boston Red Sox").
+2. "partido": Nombres completos de los equipos o rivales (ej. "Real Madrid vs Barcelona", "Alemannia am. vs. Karlsruher am.", "Chivas vs América").
 3. "deporte": Deporte ("Fútbol", "Béisbol", "Básquetbol", "Fútbol Americano", "Tenis", etc.).
 4. "liga": Liga o torneo (ej. "LaLiga", "Liga MX", "Premier League", "MLB", etc., o "N/D").
-5. "mercado": Mercado exacto de la apuesta (ej. "Ambos Anotan - Sí", "Más de 2.5 Goles", "Ganador del Partido (1X2) - Real Madrid", "Línea de Carreras -1.5", etc.).
-6. "momio": Cuota en formato DECIMAL (ej. si está en formato americano como -110 -> 1.91, +150 -> 2.50, si es decimal como 1.85 -> 1.85).
-7. "stake": Importe o monto apostado en número flotante (ej. 500.0). Si no aparece visible en la imagen, asigna 500.0 por defecto.
-8. "retorno_potencial": Pago total estimado en número flotante (ej. 925.0). Si no es visible, calcula (momio * stake).
+5. "mercado": Mercado exacto de la apuesta (ej. "Menos de 5.5 Goles", "Ambos Anotan - Sí", "Más de 2.5 Goles", "Ganador del Partido (1X2) - Real Madrid").
+6. "momio": Cuota en formato DECIMAL (ej. 1.56, 1.85, etc.).
+7. "stake": Importe o monto apostado en número flotante (ej. 10.0, 500.0). Si no aparece visible en la imagen, asigna 500.0 por defecto.
+8. "retorno_potencial": Pago total estimado en número flotante (ej. 15.60). Si no es visible, calcula (momio * stake).
 9. "tipo": "Simple" o "Combinada / Parlay".
 10. "id_ticket": Número de referencia o ID del boleto si es visible, o null.
 11. "confianza_extraccion": Porcentaje entero de legibilidad de la imagen (ej. 90).
@@ -52,11 +59,11 @@ Responde ÚNICAMENTE en formato JSON plano sin bloques markdown ni texto adicion
   "deporte": "...",
   "liga": "...",
   "mercado": "...",
-  "momio": 1.85,
-  "stake": 500.0,
-  "retorno_potencial": 925.0,
+  "momio": 1.56,
+  "stake": 10.0,
+  "retorno_potencial": 15.60,
   "tipo": "Simple",
-  "id_ticket": "...",
+  "id_ticket": null,
   "confianza_extraccion": 90
 }`;
 
@@ -80,23 +87,33 @@ Responde ÚNICAMENTE en formato JSON plano sin bloques markdown ni texto adicion
     }
   };
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  let lastError = null;
 
-  try {
-    const response = await axios.post(url, payload, {
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 25000
-    });
+  // Intentar con la lista de modelos y rotación de claves
+  for (const model of VISION_MODELS) {
+    for (let i = 0; i < GEMINI_KEYS.length; i++) {
+      const apiKey = getNextGeminiKey();
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const candidate = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const cleaned = candidate.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const parsed = JSON.parse(cleaned);
+      try {
+        const response = await axios.post(url, payload, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 25000
+        });
 
-    return parsed;
-  } catch (error) {
-    console.error('[GEMINI OCR ERROR]:', error.response?.data || error.message);
-    throw new Error(`Fallo en el reconocimiento de imagen con IA: ${error.message}`);
+        const candidate = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const cleaned = candidate.replace(/```json/gi, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(cleaned);
+
+        return parsed;
+      } catch (error) {
+        lastError = error.response?.data?.error?.message || error.message;
+        console.warn(`[GEMINI RETRY] Modelo ${model} falló con clave ...${apiKey.slice(-6)}: ${lastError}`);
+      }
+    }
   }
+
+  throw new Error(`Fallo en el reconocimiento de imagen con IA: ${lastError}`);
 }
 
 /**
@@ -147,14 +164,24 @@ Responde ÚNICAMENTE en JSON con esta estructura:
   }
 
   // Fallback Gemini
-  const apiKey = getNextGeminiKey();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  const response = await axios.post(url, {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.1 }
-  });
-  const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  return JSON.parse(text.replace(/```json/gi, '').replace(/```/g, '').trim());
+  for (const model of VISION_MODELS) {
+    for (let i = 0; i < GEMINI_KEYS.length; i++) {
+      const apiKey = getNextGeminiKey();
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      try {
+        const response = await axios.post(url, {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1 }
+        }, { timeout: 15000 });
+        const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return JSON.parse(text.replace(/```json/gi, '').replace(/```/g, '').trim());
+      } catch (e) {
+        console.warn(`[GEMINI TEXT RETRY] ${model}: ${e.message}`);
+      }
+    }
+  }
+
+  throw new Error('No se pudo procesar el texto con ningún proveedor de IA.');
 }
 
 /**

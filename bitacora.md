@@ -36,7 +36,7 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
    - Sincronización de `INITIAL_BANKROLL=5000.00` y `DEFAULT_STAKE_AMOUNT=500.00`.
    - Control en tiempo real de saldo libre, dinero en juego (`in_play`), ganancia neta, Win Rate, Yield y cálculo de progreso hacia la meta de $20,000 MXN.
 2. **Motor de IA Multimodal Dual (`aiVisionService.js`)**:
-   - **Gemini 2.5 Flash Vision**: OCR inteligente que lee capturas de pantalla de boletos de cualquier casa (Bet365, Caliente, Playdoit, Codere, etc.) y extrae partido, liga, mercado, momio decimal, stake y pago potencial en JSON estructurado (fallback stake: $500.0).
+   - **Gemini 3.6 Flash Vision**: OCR inteligente que lee capturas de pantalla de boletos de cualquier casa (Bet365, Caliente, Playdoit, Codere, etc.) y extrae partido, liga, mercado, momio decimal, stake y pago potencial en JSON estructurado.
    - **DeepSeek Reasoner (`deepseek-reasoner` / `deepseek-chat`)**: Análisis táctico, probabilidad estimada y justificación matemática de valor (+EV).
 3. **Servicio de Verificación y Liquidación (`verifierService.js`)**:
    - Mapeo y evaluación automática de marcadores finales vía API-Sports (`API_SPORTS_KEY`) y reglas locales para liquidar apuestas en `WON` / `LOST` / `VOID`.
@@ -47,6 +47,11 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
    - Botones inline interactivos en cada jugada (`[✅ Ganada]`, `[❌ Perdida]`, `[⚪ Anulada]`, `[🗑️ Eliminar]`).
    - Comandos slash integrados: `/balance`, `/stats`, `/pendientes`, `/historial`, `/verificar`, `/reporte`, `/ajustar_bank`, `/ganada`, `/perdida`, `/anulada`.
    - Tarea programada (Cron cada 30 min) para auditoría y auto-verificación en segundo plano.
-6. **Publicación y Despliegue**:
-   - Código subido exitosamente a GitHub: `https://github.com/sergiooolvera/apuestasIngresadasBot` (rama `main`).
-   - Listo para conexión directa en Railway con `INITIAL_BANKROLL=5000.00` y `DEFAULT_STAKE_AMOUNT=500.00`.
+
+---
+
+### [2026-08-27] - Corrección de Modelo OCR Gemini 404 (Migración a `gemini-3.6-flash`)
+- **Problema Detectado**: La API de Google devolvió error HTTP 404 (`models/gemini-2.5-flash is no longer available to new users`) al procesar capturas de boletos en Telegram.
+- **Solución Implementada**:
+  - Actualizado el endpoint en `aiVisionService.js` para utilizar el modelo de última generación `gemini-3.6-flash` como modelo primario con arreglo de fallbacks (`gemini-3.5-flash`, `gemini-3.7-flash`, `gemini-flash-latest`, `gemini-2.5-pro`).
+  - Validación exitosa en captura real extrayendo correctamente: *"Alemannia am. vs. Karlsruher am."*, Mercado *"Menos de 5.5 Goles"*, Momio `1.56`, Stake `10.0` y Retorno `15.60` con 95% de confianza.
