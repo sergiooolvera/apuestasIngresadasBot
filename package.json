@@ -1,0 +1,17 @@
+{
+  "name": "estrategia-apuestas-tracker",
+  "version": "1.0.0",
+  "description": "Bot de Telegram para control y seguimiento de apuestas con IA (OCR Vision + DeepSeek Reasoner) y Base de Datos SQLite",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
