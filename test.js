@@ -76,8 +76,8 @@ async function runTests() {
 
   // 8. Limpiar apuesta de prueba
   deleteBet(betId);
-  adjustBankroll(10000.0, 'Reset inicial post pruebas');
-  console.log('8. Apuesta de prueba limpiada. Bankroll restaurado a $10,000.00 MXN.');
+  adjustBankroll(5000.0, 'Reset inicial post pruebas');
+  console.log('8. Apuesta de prueba limpiada. Bankroll restaurado a $5,000.00 MXN.');
 
   console.log('✅ --- TODAS LAS PRUEBAS COMPLETADAS SATISFACTORIAMENTE ---');
 }
