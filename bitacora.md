@@ -27,7 +27,7 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
 
 ---
 
-## [2026-08-27] - Implementación del Bot de Telegram (@apuestasIngresadasBot) & Preparación para Railway
+## [2026-08-27] - Implementación del Bot de Telegram (@apuestasIngresadasBot) & Publicación en GitHub
 
 ### Componentes Desarrollados:
 1. **Base de Datos Persistente SQLite (`db.js`)**:
@@ -45,5 +45,6 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
    - Botones inline interactivos en cada jugada (`[✅ Ganada]`, `[❌ Perdida]`, `[⚪ Anulada]`, `[🗑️ Eliminar]`).
    - Comandos slash integrados: `/balance`, `/stats`, `/pendientes`, `/historial`, `/verificar`, `/reporte`, `/ajustar_bank`, `/ganada`, `/perdida`, `/anulada`.
    - Tarea programada (Cron cada 30 min) para auditoría y auto-verificación en segundo plano.
-6. **Configuración para Railway**:
-   - Creación de `.gitignore`, `.env.example`, `Procfile`, inicialización de Git en la rama `main` y script de sincronización `deploy_github.bat`.
+6. **Publicación y Despliegue**:
+   - Código subido exitosamente a GitHub: `https://github.com/sergiooolvera/apuestasIngresadasBot` (rama `main`).
+   - Listo para conexión directa en Railway.
