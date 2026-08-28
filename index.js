@@ -182,7 +182,8 @@ O escribe un texto directo como:
 /pendientes - Lista de apuestas en juego con botones
 /historial - Últimas 10 jugadas registradas
 /verificar - Auto-verificar marcadores y liquidar
-/reporte - Descargar reporte visual en HTML
+/reporte - Descargar reporte visual interactivo en HTML
+/backup - Descargar archivo SQLite (.sqlite) para DB Browser
 /ganada <code>&lt;id&gt;</code> - Marcar apuesta como ganada
 /perdida <code>&lt;id&gt;</code> - Marcar apuesta como perdida
 /anulada <code>&lt;id&gt;</code> - Marcar como nula / push
@@ -310,9 +311,22 @@ ${progressBar} <b>${bank.progress_pct}%</b>
     if (command === '/reporte') {
       const filePath = generateHtmlReport();
       await bot.sendDocument(chatId, filePath, {
-        caption: '📊 <b>Reporte Interactivo de Bankroll ($10k -> $20k)</b>\n<i>Ábrelo en tu navegador para ver la tabla completa y métricas.</i>',
+        caption: '📊 <b>Reporte Interactivo de Bankroll ($5k -> $20k)</b>\n<i>Ábrelo en tu navegador para ver la tabla completa y métricas.</i>',
         parse_mode: 'HTML'
       });
+      return;
+    }
+
+    if (command === '/backup' || command === '/basededatos' || command === '/db') {
+      const dbPath = path.join(__dirname, 'database.sqlite');
+      if (fs.existsSync(dbPath)) {
+        await bot.sendDocument(chatId, dbPath, {
+          caption: '💾 <b>Archivo de Base de Datos SQLite (database.sqlite)</b>\n<i>Puedes abrirlo directamente en DB Browser for SQLite en tu PC.</i>',
+          parse_mode: 'HTML'
+        });
+      } else {
+        await bot.sendMessage(chatId, '❌ No se encontró el archivo de base de datos.');
+      }
       return;
     }
 
