@@ -132,8 +132,10 @@ function getBankroll() {
   const netProfit = currentBank - settings.initial_bank;
   const progressPct = ((netProfit / (settings.target_bank - settings.initial_bank)) * 100).toFixed(1);
 
-  // Calcular stake recomendado dinámico (4.5% - 5.0% del saldo actual)
-  const recommendedStake = Math.round((currentBank * 0.0475) / 10) * 10; // Redondeado a decenas
+  // Calcular stake recomendado: $500 MXN base o 5% si el bankroll supera los $10,000 MXN
+  const defaultStakeAmount = parseFloat(process.env.DEFAULT_STAKE_AMOUNT) || 500.0;
+  const dynamicStake = Math.round((currentBank * 0.05) / 10) * 10;
+  const recommendedStake = Math.max(defaultStakeAmount, dynamicStake);
 
   return {
     initial_bank: settings.initial_bank,

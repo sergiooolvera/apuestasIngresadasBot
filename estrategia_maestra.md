@@ -7,17 +7,15 @@
 * **Capital Inicial Activo (Bankroll en juego):** `$5,000.00 MXN`
 * **Reserva de Seguridad / Re-Buy:** `$5,000.00 MXN` (blindaje psicológico en cuenta).
 * **Objetivo de Meta Final:** **`$20,000.00 MXN`** *(Multiplicar x4 el Bank Inicial Activo)*.
-* **Modelo de Staking Dinámico por Volumen:**
-  * **Lunes a Jueves (Bajo volumen, 1 a 3 picks diarios):** Stake estándar del **`5.0%`** (`$250.00 MXN` por pick).
-  * **Viernes a Domingo (Alto volumen, 6 a 12+ picks diarios):**
-    * **Estrategia por Bloques Horarios Secuenciales (Recomendada):** Mantener `$250.00 MXN` por pick pero apostando de forma escalonada por horario (máximo 3 partidos simultáneos en juego). Al liquidarse los partidos matutinos, se reinvierte en la tarde.
-    * **Estrategia de Stake Dividido:** Si se meten 8 o más partidos que juegan al mismo tiempo, apostar **`$125.00 - $150.00 MXN`** por pick para blindar el capital.
-* **Recálculo Escalonado (Interés Compuesto):** Se recalcula el valor del stake cada **lunes por la mañana** o cada vez que el bank sume **+$2,500 MXN** de beneficio neto:
-  * **Fase 1 ($5,000 - $7,499):** Stake = **`$250 MXN`** por pick.
-  * **Fase 2 ($7,500 - $9,999):** Stake = **`$375 - $400 MXN`** por pick.
-  * **Fase 3 ($10,000 - $14,999):** Stake = **`$500 MXN`** por pick.
-  * **Fase 4 ($15,000 - $19,999):** Stake = **`$750 - $800 MXN`** por pick.
-  * **Meta ($20,000+):** Objetivo cumplido.
+* **Modelo de Staking Fijo de Alto Rendimiento:**
+  * **Stake Constante por Apuesta:** **`$500.00 MXN` por pick** (10% del Bank Inicial Activo).
+* **Gestión de Volumen y Control Diario:**
+  * **Entre semana (Lunes a Jueves, 1 a 3 picks diarios):** `$500.00 MXN` por pick.
+  * **Fin de semana (Viernes a Domingo, 6 a 12+ picks diarios):**
+    * **Estrategia por Bloques Horarios Secuenciales (Recomendada):** Mantener `$500.00 MXN` por pick apostando de forma escalonada por horario (máximo 2 a 3 partidos simultáneos en juego). Al liquidarse los partidos matutinos, se reinvierte en la tarde.
+    * **Estrategia de Stake Dividido:** Si se colocan más de 6 partidos simultáneos a la misma hora exacta, apostar **`$250.00 MXN`** por pick.
+* **Escalado Opcional con Ganancias Acumuladas:**
+  * Al superar los `$10,000 MXN` de bankroll acumulado, el stake puede mantenerse en `$500 MXN` (para máxima seguridad) o subir a `$750 MXN` (para acelerar el cierre a los `$20,000 MXN`).
 
 ---
 
@@ -56,28 +54,29 @@
 * **Criterio de Ejecución:** **Consensos Fuertes de 3+ Canales**.
 * **Protocolo:**
   * Identificar en el reporte web o boletín de Telegram los partidos donde coincidan **3 o más tipsters**.
-  * Apostar a la línea de consenso en simple con el stake asignado de la jornada.
+  * Apostar a la línea de consenso en simple con el stake de `$500.00 MXN`.
   * Utilizar el dictamen del *Abogado del Diablo (DeepSeek Reasoner)* para validar alertas y confirmar cuotas de valor $\ge @1.72$.
 
 ---
 
 ## 📊 3. MATEMÁTICAS Y PROYECCIÓN DE CRECIMIENTO
 
-| Métrica | Valor Estimado (Fase Inicial) |
+| Métrica | Valor Estimado |
 | :--- | :--- |
 | **Bankroll Activo Inicial** | `$5,000.00 MXN` |
-| **Stake Inicial por Pick (5.0%)** | `$250.00 MXN` |
+| **Stake Fijo por Apuesta** | **`$500.00 MXN`** |
 | **Cuota Media Ponderada** | `@1.78 - @1.85` |
 | **Win Rate Esperado Combinado** | `~75.0%` |
-| **Beneficio Neto Medio por Acierto** | `+$200.00 MXN` (a stake $250) |
-| **Pérdida por Desacierto** | `-$250.00 MXN` |
-| **Valor Esperado (EV) por Apuesta** | `+0.35 Unidades (+35.0% Yield)` |
-| **Volumen Diario Estimado** | `3 a 5 picks calificados` |
+| **Beneficio Neto Medio por Acierto** | **`+$390.00 - +$425.00 MXN`** |
+| **Pérdida por Desacierto** | `-$500.00 MXN` |
+| **Valor Esperado (EV) por Apuesta** | `+$175.00 MXN por jugada (+35.0% Yield)` |
+| **Aciertos Netos Necesarios** | **~35 a 38 apuestas ganadas netas** |
+| **Tiempo Estimado de Ejecución** | **~10 a 14 días de operativa regular** |
 
 ---
 
 ## 🛡️ 4. REGLAS DE ORO DE DISCIPLINA
 
-1. **Cero Tilt / Venganza:** Jamás aumentar el stake tras un fallo para "recuperar". El tamaño del stake solo se mueve en las revisiones escalonadas.
-2. **Gestión de Volumen de Fin de Semana:** Si hay 8 o más partidos el sábado o domingo, usar la técnica de **Bloques Horarios Secuenciales** (liberar saldo por horarios) o reducir a **$125 - $150 por pick** para no sobreexponer el bankroll simultáneamente.
-3. **Registro Diario:** Anotar cada apuesta enviando la captura al bot **[@apuestasIngresadasBot](https://t.me/apuestasIngresadasBot)**.
+1. **Cero Tilt / Venganza:** Jamás aumentar el stake de $500 tras un fallo para "recuperar".
+2. **Gestión de Fin de Semana:** Usar la técnica de **Bloques Horarios Secuenciales** (liberar saldo por horarios) para no tener más de 3 apuestas simultáneas abiertas al mismo tiempo.
+3. **Registro Diario:** Enviar la foto del boleto a **[@apuestasIngresadasBot](https://t.me/apuestasIngresadasBot)**.
