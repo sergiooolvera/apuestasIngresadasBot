@@ -63,17 +63,27 @@ function initDb() {
     CREATE INDEX IF NOT EXISTS idx_bets_placed_at ON bets(placed_at);
   `);
 
-  // Inicializar bankroll_settings si no existe
+  // Inicializar o sincronizar bankroll_settings
   const existing = db.prepare('SELECT id FROM bankroll_settings WHERE id = 1').get();
-  if (!existing) {
-    const initialBank = parseFloat(process.env.INITIAL_BANKROLL) || 10000.0;
-    const targetBank = parseFloat(process.env.TARGET_BANKROLL) || 20000.0;
-    const defaultStakePct = parseFloat(process.env.DEFAULT_STAKE_PCT) || 5.0;
+  const initialBank = parseFloat(process.env.INITIAL_BANKROLL) || 5000.0;
+  const targetBank = parseFloat(process.env.TARGET_BANKROLL) || 20000.0;
+  const defaultStakePct = parseFloat(process.env.DEFAULT_STAKE_PCT) || 5.0;
 
+  if (!existing) {
     db.prepare(`
       INSERT INTO bankroll_settings (id, initial_bank, current_bank, target_bank, default_stake_pct)
       VALUES (1, ?, ?, ?, ?)
     `).run(initialBank, initialBank, targetBank, defaultStakePct);
+  } else {
+    // Si no hay apuestas registradas, sincronizar con las variables de entorno
+    const betCount = db.prepare('SELECT COUNT(*) as count FROM bets').get().count;
+    if (betCount === 0) {
+      db.prepare(`
+        UPDATE bankroll_settings
+        SET initial_bank = ?, current_bank = ?, target_bank = ?, default_stake_pct = ?
+        WHERE id = 1
+      `).run(initialBank, initialBank, targetBank, defaultStakePct);
+    }
   }
 }
 

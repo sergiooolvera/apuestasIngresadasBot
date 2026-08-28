@@ -1,21 +1,22 @@
-# 🚀 ESTRATEGIA MAESTRA DE APUESTAS DEPORTIVAS: RUTA $10,000 ➔ $20,000
+# 🚀 ESTRATEGIA MAESTRA DE APUESTAS DEPORTIVAS: RUTA $5,000 ➔ $20,000
 
 ---
 
 ## 🎯 1. OBJETIVO Y PARÁMETROS FINANCIEROS
 
-* **Capital Inicial (Bankroll):** `$10,000.00 MXN`
-* **Objetivo de Beneficio Neto:** `+$10,000.00 MXN` (Meta: Alcanzar `$20,000.00 MXN`)
+* **Capital Inicial Activo (Bankroll en juego):** `$5,000.00 MXN`
+* **Reserva de Seguridad / Re-Buy:** `$5,000.00 MXN` (blindaje psicológico en cuenta).
+* **Objetivo de Meta Final:** **`$20,000.00 MXN`** *(Multiplicar x4 el Bank Inicial Activo)*.
 * **Modelo de Staking Dinámico por Volumen:**
-  * **Lunes a Jueves (Bajo volumen, 1 a 3 picks diarios):** Stake completo de **`4.5% - 5.0%`** (`$450.00 - $500.00 MXN` por pick).
+  * **Lunes a Jueves (Bajo volumen, 1 a 3 picks diarios):** Stake estándar del **`5.0%`** (`$250.00 MXN` por pick).
   * **Viernes a Domingo (Alto volumen, 6 a 12+ picks diarios):**
-    * **Estrategia por Bloques Horarios Secuenciales (Recomendada):** Mantener `$500.00 MXN` por pick pero apostando de forma escalonada por horario (máximo 3 partidos simultáneos en juego). Al liquidarse los partidos matutinos, se reinvierte en la tarde.
-    * **Estrategia de Stake Dividido:** Si se meten 8 o más partidos que juegan al mismo tiempo, apostar **`$250.00 - $300.00 MXN`** por pick para blindar el capital.
+    * **Estrategia por Bloques Horarios Secuenciales (Recomendada):** Mantener `$250.00 MXN` por pick pero apostando de forma escalonada por horario (máximo 3 partidos simultáneos en juego). Al liquidarse los partidos matutinos, se reinvierte en la tarde.
+    * **Estrategia de Stake Dividido:** Si se meten 8 o más partidos que juegan al mismo tiempo, apostar **`$125.00 - $150.00 MXN`** por pick para blindar el capital.
 * **Recálculo Escalonado (Interés Compuesto):** Se recalcula el valor del stake cada **lunes por la mañana** o cada vez que el bank sume **+$2,500 MXN** de beneficio neto:
-  * **Fase 1 ($10,000 - $12,499):** Stake = `$450 - $500` por pick.
-  * **Fase 2 ($12,500 - $14,999):** Stake = `$600` por pick.
-  * **Fase 3 ($15,000 - $17,499):** Stake = `$700` por pick.
-  * **Fase 4 ($17,500 - $19,999):** Stake = `$800 - $850` por pick.
+  * **Fase 1 ($5,000 - $7,499):** Stake = **`$250 MXN`** por pick.
+  * **Fase 2 ($7,500 - $9,999):** Stake = **`$375 - $400 MXN`** por pick.
+  * **Fase 3 ($10,000 - $14,999):** Stake = **`$500 MXN`** por pick.
+  * **Fase 4 ($15,000 - $19,999):** Stake = **`$750 - $800 MXN`** por pick.
   * **Meta ($20,000+):** Objetivo cumplido.
 
 ---
@@ -62,21 +63,21 @@
 
 ## 📊 3. MATEMÁTICAS Y PROYECCIÓN DE CRECIMIENTO
 
-| Métrica | Valor Estimado |
+| Métrica | Valor Estimado (Fase Inicial) |
 | :--- | :--- |
+| **Bankroll Activo Inicial** | `$5,000.00 MXN` |
+| **Stake Inicial por Pick (5.0%)** | `$250.00 MXN` |
 | **Cuota Media Ponderada** | `@1.78 - @1.85` |
 | **Win Rate Esperado Combinado** | `~75.0%` |
-| **Beneficio Neto Medio por Acierto** | `+$380.00 MXN` (a stake $480) |
-| **Pérdida por Desacierto** | `-$480.00 MXN` |
-| **Valor Esperado (EV) por Apuesta** | `+0.35 Unidades (+35.0% ROI/Yield)` |
+| **Beneficio Neto Medio por Acierto** | `+$200.00 MXN` (a stake $250) |
+| **Pérdida por Desacierto** | `-$250.00 MXN` |
+| **Valor Esperado (EV) por Apuesta** | `+0.35 Unidades (+35.0% Yield)` |
 | **Volumen Diario Estimado** | `3 a 5 picks calificados` |
-| **Aciertos Netos Necesarios** | `~22 a 26 apuestas ganadas netas` |
-| **Tiempo Estimado de Ejecución** | **12 a 18 días de operación disciplinada** |
 
 ---
 
 ## 🛡️ 4. REGLAS DE ORO DE DISCIPLINA
 
 1. **Cero Tilt / Venganza:** Jamás aumentar el stake tras un fallo para "recuperar". El tamaño del stake solo se mueve en las revisiones escalonadas.
-2. **Gestión de Volumen de Fin de Semana:** Si hay 8 o más partidos el sábado o domingo, usar la técnica de **Bloques Horarios Secuenciales** (liberar saldo por horarios) o reducir a **$250 - $300 por pick** para no sobreexponer el bankroll simultáneamente.
-3. **Registro Diario:** Anotar cada apuesta, momio real obtenido y resultado en la bitácora para monitorear el yield en tiempo real.
+2. **Gestión de Volumen de Fin de Semana:** Si hay 8 o más partidos el sábado o domingo, usar la técnica de **Bloques Horarios Secuenciales** (liberar saldo por horarios) o reducir a **$125 - $150 por pick** para no sobreexponer el bankroll simultáneamente.
+3. **Registro Diario:** Anotar cada apuesta enviando la captura al bot **[@apuestasIngresadasBot](https://t.me/apuestasIngresadasBot)**.

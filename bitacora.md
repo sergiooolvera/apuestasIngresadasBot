@@ -1,7 +1,7 @@
-# Bitácora de Desarrollo - Estrategia Maestra de Apuestas Deportivas (Bank 10k -> 20k)
+# Bitácora de Desarrollo - Estrategia Maestra de Apuestas Deportivas (Bank 5k -> 20k)
 
 ## Objetivo
-Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestión de bankroll ($10,000 iniciales -> objetivo $20,000 de balance total, +$10,000 de beneficio neto) aprovechando los 3 sistemas inteligentes desarrollados:
+Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestión de bankroll ($5,000 iniciales activos con $5,000 de reserva -> objetivo $20,000 de balance total) aprovechando los 3 sistemas inteligentes desarrollados:
 1. **`rojas y goles`**: Alertas en vivo con SafeOdds @1.60+, filtrado por reglas tácticas de élite y análisis profundo con DeepSeek Reasoner.
 2. **`apuestasprepartido`**: Predictor pre-partido con boletines por bloques, módulos ofensivo (AA/Over 2.5) y defensivo (Under/BTTS NO) con DeepSeek Reasoner.
 3. **`pronosticos_deportivos_yt`**: Analizador de consensos de 12 canales tipsters de YouTube con filtro crítico de "Abogado del Diablo" y recomendación de valor @1.72+.
@@ -11,14 +11,15 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
 ## [2026-08-27] - Alineación Estratégica Completa (/grill-me) y Definición del Plan Maestro
 
 ### 1. Parámetros Financieros y de Gestión de Bankroll
-- **Bankroll Inicial**: $10,000.00 MXN.
-- **Objetivo Financiero**: $20,000.00 MXN (+100% ROI, +$10,000 de ganancia neta).
+- **Bankroll Inicial Activo**: $5,000.00 MXN.
+- **Reserva de Seguridad**: $5,000.00 MXN en respaldo.
+- **Objetivo Financiero**: $20,000.00 MXN (Multiplicar x4 el Bank Activo).
 - **Modelo de Staking Dinámico por Volumen (Entre Semana vs Fin de Semana)**:
-  - **Entre semana (Lunes a Jueves, bajo volumen 1-3 picks)**: Stake estándar del 4.5% - 5.0% ($450 - $500 por pick).
+  - **Entre semana (Lunes a Jueves, bajo volumen 1-3 picks)**: Stake estándar del 5.0% ($250 por pick).
   - **Fin de semana (Viernes a Domingo, alto volumen 6-12 picks)**: 
-    - **Opción A (Staking por Bloques Horarios Secuenciales)**: Mantener $500 apostando por bloques que no coincidan en la misma hora (máximo 3 partidos simultáneos). Conforme terminan los de la mañana, se reinvierte en los de la tarde.
-    - **Opción B (Stake Reducido por Volumen Masivo)**: Si se meten 8+ picks simultáneos a la misma hora, reducir a media unidad ($250 - $300 por pick) para no sobrecargar el bankroll.
-- **Recálculo Escalonado (Interés Compuesto)**: La unidad se recalcula cada lunes o al alcanzar hitos de +$2,500 de beneficio acumulado ($10,000 -> $12,500 -> $15,000 -> $17,500 -> $20,000).
+    - **Opción A (Staking por Bloques Horarios Secuenciales)**: Mantener $250 apostando por bloques que no coincidan en la misma hora (máximo 3 partidos simultáneos). Conforme terminan los de la mañana, se reinvierte en los de la tarde.
+    - **Opción B (Stake Reducido por Volumen Masivo)**: Si se meten 8+ picks simultáneos a la misma hora, reducir a media unidad ($125 - $150 por pick) para no sobrecargar el bankroll.
+- **Recálculo Escalonado (Interés Compuesto)**: La unidad se recalcula cada lunes o al alcanzar hitos de +$2,500 de beneficio acumulado ($5,000 -> $7,500 -> $10,000 -> $15,000 -> $20,000).
 
 ### 2. Protocolo Operativo por Proyecto
 - **`rojas y goles`**: Reglas 1, 2, 7 y Late Goal con Confianza $\ge 75\%$ y Momio $\ge 1.70$.
@@ -32,6 +33,7 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
 ### Componentes Desarrollados:
 1. **Base de Datos Persistente SQLite (`db.js`)**:
    - Tablas `bankroll_settings`, `bets` y `bankroll_transactions` con modo WAL de alto rendimiento.
+   - Sincronización automática de `INITIAL_BANKROLL=5000.00` desde `.env`.
    - Control en tiempo real de saldo libre, dinero en juego (`in_play`), ganancia neta, Win Rate, Yield y cálculo de progreso hacia la meta de $20,000 MXN.
 2. **Motor de IA Multimodal Dual (`aiVisionService.js`)**:
    - **Gemini 2.5 Flash Vision**: OCR inteligente que lee capturas de pantalla de boletos de cualquier casa (Bet365, Caliente, Playdoit, Codere, etc.) y extrae partido, liga, mercado, momio decimal, stake y pago potencial en JSON estructurado.
@@ -47,4 +49,4 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
    - Tarea programada (Cron cada 30 min) para auditoría y auto-verificación en segundo plano.
 6. **Publicación y Despliegue**:
    - Código subido exitosamente a GitHub: `https://github.com/sergiooolvera/apuestasIngresadasBot` (rama `main`).
-   - Listo para conexión directa en Railway.
+   - Listo para conexión directa en Railway con `INITIAL_BANKROLL=5000.00`.
