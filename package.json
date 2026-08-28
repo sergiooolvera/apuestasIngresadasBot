@@ -12,6 +12,7 @@
     "better-sqlite3": "^11.8.1",
     "dotenv": "^16.4.7",
     "node-cron": "^3.0.3",
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "tesseract.js": "^7.0.0"
   }
 }

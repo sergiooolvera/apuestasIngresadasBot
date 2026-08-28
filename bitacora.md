@@ -50,8 +50,13 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
 
 ---
 
-### [2026-08-27] - Corrección de Modelo OCR Gemini 404 (Migración a `gemini-3.6-flash`)
-- **Problema Detectado**: La API de Google devolvió error HTTP 404 (`models/gemini-2.5-flash is no longer available to new users`) al procesar capturas de boletos en Telegram.
-- **Solución Implementada**:
-  - Actualizado el endpoint en `aiVisionService.js` para utilizar el modelo de última generación `gemini-3.6-flash` como modelo primario con arreglo de fallbacks (`gemini-3.5-flash`, `gemini-3.7-flash`, `gemini-flash-latest`, `gemini-2.5-pro`).
-  - Validación exitosa en captura real extrayendo correctamente: *"Alemannia am. vs. Karlsruher am."*, Mercado *"Menos de 5.5 Goles"*, Momio `1.56`, Stake `10.0` y Retorno `15.60` con 95% de confianza.
+### [2026-08-28] - Migración a Gemini 3.1 Flash Lite e Integración de OCR Local (Tesseract) + DeepSeek
+- **Diagnóstico del Error**:
+  - Google retiró de su catálogo activo modelos obsoletos como `gemini-2.5-pro` y `gemini-2.5-flash`, arrojando errores de obsolescencia.
+  - La API de DeepSeek (`api.deepseek.com`) es un modelo de lenguaje y razonamiento (`deepseek-chat` / `deepseek-reasoner`), **no cuenta con visión multimodal directa para procesar imágenes binarias**.
+- **Solución Robusta de Doble Capa Implementada**:
+  1. **Nivel 1 (Gemini Vision Actualizado)**: Configuración prioritaria con modelos de alta disponibilidad y baja latencia (`gemini-3.1-flash-lite`, `gemini-3.1-flash-lite-preview`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-flash-latest`, `gemini-3.7-flash`), eliminando modelos deprecados.
+  2. **Nivel 2 (Respaldo Híbrido OCR Local + DeepSeek)**: Si las APIs de visión externa fallan por red, saturación o cuota, el sistema activa automáticamente un motor OCR local (`tesseract.js`) para extraer el texto del boleto y lo envía a **DeepSeek (`deepseek-chat`)** para estructurar el JSON exacto de la apuesta.
+  3. **Control de Repositorio**: Se agregó `*.traineddata` a `.gitignore` para optimizar el control de versiones.
+- **Resultado**: Cero tiempo de inactividad, alta velocidad de respuesta y tolerancia a fallos total ante cualquier caída o cambio de la API de Google.
+

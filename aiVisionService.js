@@ -17,24 +17,91 @@ function getNextGeminiKey() {
 
 const DEEPSEEK_KEY = process.env.DEEPSEEK_API_KEY || '';
 
+const Tesseract = require('tesseract.js');
+
 const VISION_MODELS = [
+  'gemini-3.1-flash-lite',
+  'gemini-3.1-flash-lite-preview',
   'gemini-3.6-flash',
   'gemini-3.5-flash',
-  'gemini-3.7-flash',
   'gemini-flash-latest',
-  'gemini-2.5-pro'
+  'gemini-flash-lite-latest',
+  'gemini-3.7-flash'
 ];
 
 /**
- * Analiza una captura de pantalla de boleto de apuesta usando Gemini Vision (Multimodal).
- * Extrae casa de apuestas, partido, mercado, momio, stake y ganancia potencial en JSON estructurado.
+ * Procesa la imagen mediante OCR local (Tesseract) y estructura los datos con DeepSeek.
+ * Sirve de respaldo total cuando las APIs de visión externa no responden.
+ */
+async function parseBetImageWithOcrAndDeepSeek(imageBuffer) {
+  console.log('[FALLBACK] Iniciando reconocimiento OCR local con Tesseract...');
+  try {
+    const { data: { text } } = await Tesseract.recognize(
+      imageBuffer,
+      'spa+eng',
+      { logger: () => {} }
+    );
+
+    if (!text || text.trim().length < 5) {
+      throw new Error('El OCR no detectó texto legible en la imagen.');
+    }
+
+    console.log('[FALLBACK] Texto OCR extraído con éxito. Estructurando con DeepSeek...');
+    const prompt = `Eres un sistema experto en apuestas deportivas. A continuación se muestra el texto extraído por OCR de una captura de pantalla de boleto de apuesta:
+"""
+${text}
+"""
+
+Extrae minuciosamente todos los datos y responde ÚNICAMENTE con un JSON plano y válido con el siguiente formato exacto (sin texto adicional ni bloques markdown):
+{
+  "casa_apuestas": "Nombre de la casa de apuestas (ej. Bet365, Caliente, Codere, o Desconocido)",
+  "partido": "Nombre de los equipos (ej. Real Madrid vs Barcelona)",
+  "deporte": "Fútbol u otro deporte",
+  "liga": "Nombre del torneo o N/D",
+  "mercado": "Mercado exacto (ej. Menos de 5.5 Goles, Over 2.5, Ambos Anotan)",
+  "momio": 1.80,
+  "stake": 500.0,
+  "retorno_potencial": 900.0,
+  "tipo": "Simple",
+  "id_ticket": null,
+  "confianza_extraccion": 80
+}`;
+
+    if (DEEPSEEK_KEY) {
+      const response = await axios.post(
+        'https://api.deepseek.com/chat/completions',
+        {
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${DEEPSEEK_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 20000
+        }
+      );
+
+      const candidate = response.data?.choices?.[0]?.message?.content || '';
+      const cleaned = candidate.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      parsed.source_method = 'OCR_TESSERACT_DEEPSEEK';
+      return parsed;
+    }
+  } catch (err) {
+    console.error('[OCR DEEPSEEK FALLBACK ERROR]:', err.message);
+  }
+  return null;
+}
+
+/**
+ * Analiza una captura de pantalla de boleto de apuesta usando Gemini Vision (Multimodal)
+ * con fallback automático a OCR Local + DeepSeek.
  */
 async function parseBetImageWithGemini(imageBuffer, mimeType = 'image/png') {
   const base64Data = imageBuffer.toString('base64');
-
-  if (GEMINI_KEYS.length === 0) {
-    throw new Error('No se configuraron claves de GEMINI_API_KEYS en el archivo .env');
-  }
 
   const prompt = `Eres un sistema OCR y analista experto de apuestas deportivas.
 Tu objetivo es leer minuciosamente la captura de pantalla del boleto de apuesta adjunto y extraer todos los datos clave en formato JSON EXACTO.
@@ -89,31 +156,40 @@ Responde ÚNICAMENTE en formato JSON plano sin bloques markdown ni texto adicion
 
   let lastError = null;
 
-  // Intentar con la lista de modelos y rotación de claves
-  for (const model of VISION_MODELS) {
-    for (let i = 0; i < GEMINI_KEYS.length; i++) {
-      const apiKey = getNextGeminiKey();
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  // 1. Intentar con Gemini Vision (modelos actualizados y rotación de claves)
+  if (GEMINI_KEYS.length > 0) {
+    for (const model of VISION_MODELS) {
+      for (let i = 0; i < GEMINI_KEYS.length; i++) {
+        const apiKey = getNextGeminiKey();
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      try {
-        const response = await axios.post(url, payload, {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 25000
-        });
+        try {
+          const response = await axios.post(url, payload, {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 15000
+          });
 
-        const candidate = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const cleaned = candidate.replace(/```json/gi, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(cleaned);
-
-        return parsed;
-      } catch (error) {
-        lastError = error.response?.data?.error?.message || error.message;
-        console.warn(`[GEMINI RETRY] Modelo ${model} falló con clave ...${apiKey.slice(-6)}: ${lastError}`);
+          const candidate = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const cleaned = candidate.replace(/```json/gi, '').replace(/```/g, '').trim();
+          const parsed = JSON.parse(cleaned);
+          parsed.source_method = `GEMINI_VISION_${model}`;
+          return parsed;
+        } catch (error) {
+          lastError = error.response?.data?.error?.message || error.message;
+          console.warn(`[GEMINI RETRY] Modelo ${model} falló: ${lastError}`);
+        }
       }
     }
   }
 
-  throw new Error(`Fallo en el reconocimiento de imagen con IA: ${lastError}`);
+  // 2. Si todos los modelos de Gemini fallan, activar respaldo OCR Local + DeepSeek
+  console.log('[GEMINI FAILED] Activando respaldo OCR + DeepSeek...');
+  const ocrDeepSeekResult = await parseBetImageWithOcrAndDeepSeek(imageBuffer);
+  if (ocrDeepSeekResult && (ocrDeepSeekResult.partido || ocrDeepSeekResult.mercado)) {
+    return ocrDeepSeekResult;
+  }
+
+  throw new Error(`No se pudo procesar la imagen con Gemini Vision ni con OCR DeepSeek: ${lastError}`);
 }
 
 /**
