@@ -228,6 +228,11 @@ function updateBetStatus(betId, newStatus, profitLoss = null, scoreFinal = null)
       currentBank += calculatedProfitLoss;
     } else if (newStatus === 'VOID' || newStatus === 'CANCELLED') {
       calculatedProfitLoss = 0.0;
+    } else if (newStatus === 'CASH_OUT') {
+      calculatedProfitLoss = profitLoss !== null 
+        ? parseFloat(profitLoss) 
+        : 0.0;
+      currentBank += calculatedProfitLoss;
     }
 
     // Actualizar apuesta

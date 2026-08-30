@@ -64,6 +64,8 @@ Extrae minuciosamente todos los datos y responde ÚNICAMENTE con un JSON plano y
   "retorno_potencial": 900.0,
   "tipo": "Simple",
   "id_ticket": null,
+  "status": "status del boleto: PENDING (si sigue activo), WON (si es ganadora / verde), LOST (si es perdida / roja), VOID (si es anulada / push / negra / gris), CASH_OUT (si fue cobrada / cash out / azul)",
+  "cash_out_amount": null,
   "confianza_extraccion": 80
 }`;
 
@@ -118,6 +120,8 @@ Instrucciones de Extracción:
 9. "tipo": "Simple" o "Combinada / Parlay".
 10. "id_ticket": Número de referencia o ID del boleto si es visible, o null.
 11. "confianza_extraccion": Porcentaje entero de legibilidad de la imagen (ej. 90).
+12. "status": El veredicto o estado actual del boleto si ya está resuelto en la imagen, basándote en textos del boleto ("Ganada", "Perdida", "Perdido", "Cobrado", "Cash Out", "Anulado", "Push", "Reembolsado", etc.) y en colores visuales indicativos si son claramente interpretables (Ganada/Verde -> "WON", Perdida/Roja -> "LOST", Anulada/Push/Negra/Gris -> "VOID", Cobrada/Cash Out/Azul -> "CASH_OUT"). Si el boleto sigue activo, no está resuelto o no se indica, asigna "PENDING".
+13. "cash_out_amount": Si el estado es "CASH_OUT", extrae el monto cobrado de forma neta (número flotante) indicado en la imagen (a veces dice "Cobrado: $XXX" o "Pago: $XXX"). Si no aplica o no se detecta, asigna null.
 
 Responde ÚNICAMENTE en formato JSON plano sin bloques markdown ni texto adicional:
 {
@@ -131,6 +135,8 @@ Responde ÚNICAMENTE en formato JSON plano sin bloques markdown ni texto adicion
   "retorno_potencial": 15.60,
   "tipo": "Simple",
   "id_ticket": null,
+  "status": "PENDING",
+  "cash_out_amount": null,
   "confianza_extraccion": 90
 }`;
 
@@ -210,6 +216,8 @@ Responde ÚNICAMENTE en JSON con esta estructura:
   "stake": 500.0,
   "retorno_potencial": 900.0,
   "tipo": "Simple",
+  "status": "PENDING",
+  "cash_out_amount": null,
   "confianza_extraccion": 85
 }`;
 

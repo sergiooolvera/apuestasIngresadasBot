@@ -128,16 +128,48 @@ bot.on('photo', async (msg) => {
       user_id: msg.from.id
     });
 
+    let finalStatus = extracted.status || 'PENDING';
+    let profitLoss = null;
+
+    if (finalStatus !== 'PENDING') {
+      if (finalStatus === 'VOID') {
+        profitLoss = 0.0;
+      } else if (finalStatus === 'CASH_OUT') {
+        if (extracted.cash_out_amount !== undefined && extracted.cash_out_amount !== null) {
+          profitLoss = parseFloat(extracted.cash_out_amount) - parseFloat(extracted.stake || 500);
+        } else {
+          profitLoss = 0.0;
+        }
+      }
+      updateBetStatus(betId, finalStatus, profitLoss);
+    }
+
     const bank = getBankroll();
+    const updatedBet = getBetById(betId);
 
     // Eliminar mensaje de espera
     await bot.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
 
-    // Enviar tarjeta formateada con botones interactivos
-    await bot.sendMessage(chatId, formatBetCard(extracted, betId, bank), {
-      parse_mode: 'HTML',
-      reply_markup: getResolutionKeyboard(betId)
-    });
+    if (finalStatus !== 'PENDING') {
+      const icon = finalStatus === 'WON' ? '✅ GANADA' : finalStatus === 'LOST' ? '❌ PERDIDA' : finalStatus === 'VOID' ? '⚪ ANULADA' : '💵 CASH OUT';
+      const plText = updatedBet.profit_loss !== null ? `(${updatedBet.profit_loss >= 0 ? '+' : ''}$${updatedBet.profit_loss.toFixed(2)} MXN)` : '';
+      const cardText = `${formatBetCard(extracted, betId, bank)}\n\n━━━━━━━━━━━━━━━━━━━━\n<b>ESTADO FINAL:</b> ${icon} ${plText}\n🏦 <b>Nuevo Saldo:</b> $${bank.current_bank.toFixed(2)} MXN`;
+
+      await bot.sendMessage(chatId, cardText, {
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🗑️ Eliminar', callback_data: `del_${betId}` }]
+          ]
+        }
+      });
+    } else {
+      // Enviar tarjeta formateada con botones interactivos
+      await bot.sendMessage(chatId, formatBetCard(extracted, betId, bank), {
+        parse_mode: 'HTML',
+        reply_markup: getResolutionKeyboard(betId)
+      });
+    }
 
   } catch (error) {
     console.error('[PHOTO PROCESS ERROR]:', error);
@@ -357,12 +389,46 @@ ${progressBar} <b>${bank.progress_pct}%</b>
         user_id: msg.from.id
       });
 
+      let finalStatus = extracted.status || 'PENDING';
+      let profitLoss = null;
+
+      if (finalStatus !== 'PENDING') {
+        if (finalStatus === 'VOID') {
+          profitLoss = 0.0;
+        } else if (finalStatus === 'CASH_OUT') {
+          if (extracted.cash_out_amount !== undefined && extracted.cash_out_amount !== null) {
+            profitLoss = parseFloat(extracted.cash_out_amount) - parseFloat(extracted.stake || 500);
+          } else {
+            profitLoss = 0.0;
+          }
+        }
+        updateBetStatus(betId, finalStatus, profitLoss);
+      }
+
       const bank = getBankroll();
+      const updatedBet = getBetById(betId);
+
       await bot.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
-      await bot.sendMessage(chatId, formatBetCard(extracted, betId, bank), {
-        parse_mode: 'HTML',
-        reply_markup: getResolutionKeyboard(betId)
-      });
+
+      if (finalStatus !== 'PENDING') {
+        const icon = finalStatus === 'WON' ? '✅ GANADA' : finalStatus === 'LOST' ? '❌ PERDIDA' : finalStatus === 'VOID' ? '⚪ ANULADA' : '💵 CASH OUT';
+        const plText = updatedBet.profit_loss !== null ? `(${updatedBet.profit_loss >= 0 ? '+' : ''}$${updatedBet.profit_loss.toFixed(2)} MXN)` : '';
+        const cardText = `${formatBetCard(extracted, betId, bank)}\n\n━━━━━━━━━━━━━━━━━━━━\n<b>ESTADO FINAL:</b> ${icon} ${plText}\n🏦 <b>Nuevo Saldo:</b> $${bank.current_bank.toFixed(2)} MXN`;
+
+        await bot.sendMessage(chatId, cardText, {
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🗑️ Eliminar', callback_data: `del_${betId}` }]
+            ]
+          }
+        });
+      } else {
+        await bot.sendMessage(chatId, formatBetCard(extracted, betId, bank), {
+          parse_mode: 'HTML',
+          reply_markup: getResolutionKeyboard(betId)
+        });
+      }
     } catch (e) {
       await bot.editMessageText(`❌ No se pudo interpretar la apuesta: ${e.message}`, {
         chat_id: chatId,
@@ -420,12 +486,13 @@ bot.on('callback_query', async (query) => {
     if (action === 'won') newStatus = 'WON';
     else if (action === 'lost') newStatus = 'LOST';
     else if (action === 'void') newStatus = 'VOID';
+    else if (action === 'cashout') newStatus = 'CASH_OUT';
 
-    if (['WON', 'LOST', 'VOID'].includes(newStatus)) {
+    if (['WON', 'LOST', 'VOID', 'CASH_OUT'].includes(newStatus)) {
       const updated = updateBetStatus(betId, newStatus);
       const bank = getBankroll();
 
-      const icon = newStatus === 'WON' ? '✅ GANADA' : newStatus === 'LOST' ? '❌ PERDIDA' : '⚪ ANULADA';
+      const icon = newStatus === 'WON' ? '✅ GANADA' : newStatus === 'LOST' ? '❌ PERDIDA' : newStatus === 'VOID' ? '⚪ ANULADA' : '💵 CASH OUT';
       const plText = updated.profit_loss !== null ? `(${updated.profit_loss >= 0 ? '+' : ''}$${updated.profit_loss.toFixed(2)} MXN)` : '';
 
       await bot.answerCallbackQuery(query.id, { text: `Apuesta #${betId}: ${icon} ${plText}` });

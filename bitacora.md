@@ -60,3 +60,16 @@ Diseñar, estructurar y ejecutar una estrategia integral de inversión y gestió
   3. **Control de Repositorio**: Se agregó `*.traineddata` a `.gitignore` para optimizar el control de versiones.
 - **Resultado**: Cero tiempo de inactividad, alta velocidad de respuesta y tolerancia a fallos total ante cualquier caída o cambio de la API de Google.
 
+---
+
+## [2026-08-30] - Extracción Automática de Veredictos y Soporte de Cash Out
+- **Diagnóstico y Requerimiento**:
+  - Al subir boletos ya resueltos, el bot preguntaba innecesariamente si la apuesta era Ganada/Perdida/Push mediante botones de Telegram.
+  - No existía soporte nativo ni visual para apuestas resueltas por Cash Out (identificadas por el color azul o texto informativo).
+- **Solución Implementada**:
+  1. **Actualización de Prompts (`aiVisionService.js`)**: Se instruyó a Gemini Vision y al fallback OCR+DeepSeek a detectar el estado de resolución y el color del boleto para extraer `status` (`WON`, `LOST`, `VOID`, `CASH_OUT` o `PENDING`) y `cash_out_amount` si aplica.
+  2. **Lógica en Base de Datos (`db.js`)**: Se integró soporte transaccional para la resolución `'CASH_OUT'`, sumando/restando el beneficio neto al `current_bank`.
+  3. **Optimización de la Interacción (`index.js`)**: El bot ahora liquida automáticamente los boletos ya resueltos sin enviar el teclado de preguntas al usuario (evitando botones de resolución redundantes). Solo se mantiene el botón para "Eliminar".
+  4. **Reporte HTML (`reportGenerator.js`)**: Se diseñó el badge `.badge-cashout` (azul celeste) en el dashboard de bankroll y se calibró la visualización del profit/loss neto real para Cash Out.
+- **Resultado**: Interacción optimizada, cero pasos redundantes al ingresar boletos finalizados y soporte matemático de bankroll para cobros anticipados.
+

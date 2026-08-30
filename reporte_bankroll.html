@@ -47,6 +47,7 @@
     .badge-lost { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     .badge-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-void { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .badge-cashout { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
 
     .market-tag { background: #1e293b; padding: 3px 8px; border-radius: 6px; font-size: 12px; color: #38bdf8; }
     .positive { color: var(--green); }
@@ -71,35 +72,35 @@
     <div class="grid">
       <div class="card">
         <div class="card-label">Bankroll Actual</div>
-        <div class="card-value" style="color: #38bdf8;">$5425.00 MXN</div>
+        <div class="card-value" style="color: #38bdf8;">$4900.00 MXN</div>
         <div class="card-footer">Inicial: $5000.00 MXN</div>
       </div>
       <div class="card">
         <div class="card-label">Ganancia Neta</div>
-        <div class="card-value positive">
-          +$425.00 MXN
+        <div class="card-value negative">
+          $-100.00 MXN
         </div>
-        <div class="card-footer">Progreso Meta: 2.8%</div>
+        <div class="card-footer">Progreso Meta: 0.0%</div>
       </div>
       <div class="card">
         <div class="card-label">Win Rate / Acierto</div>
-        <div class="card-value" style="color: #4ade80;">100%</div>
-        <div class="card-footer">1 Ganadas · 0 Perdidas</div>
+        <div class="card-value" style="color: #4ade80;">0%</div>
+        <div class="card-footer">0 Ganadas · 0 Perdidas</div>
       </div>
       <div class="card">
         <div class="card-label">Yield / Retorno</div>
-        <div class="card-value" style="color: #818cf8;">+85%</div>
-        <div class="card-footer">Stake Sugerido: $260 MXN</div>
+        <div class="card-value" style="color: #818cf8;">+0%</div>
+        <div class="card-footer">Stake Sugerido: $500 MXN</div>
       </div>
     </div>
 
     <div class="progress-section">
       <div class="progress-header">
         <span>Ruta a la Meta ($20,000 MXN)</span>
-        <span>2.8% Completado</span>
+        <span>0.0% Completado</span>
       </div>
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" style="width: 2.833333333333333%;"></div>
+        <div class="progress-bar-fill" style="width: 0%;"></div>
       </div>
     </div>
 
@@ -122,17 +123,33 @@
           
       <tr>
         <td><strong>#3</strong></td>
-        <td>27 ago, 10:08 p.m.</td>
+        <td>30 ago, 01:06 p.m.</td>
         <td>
-          <div class="event-title">Real Madrid vs Barcelona</div>
-          <div class="event-sub">Fútbol · LaLiga (Bet365)</div>
+          <div class="event-title">Monterrey vs Tigres</div>
+          <div class="event-sub">Fútbol · N/D (Caliente)</div>
         </td>
-        <td><span class="market-tag">Ambos Anotan y Over 2.5</span></td>
-        <td><strong>@1.85</strong></td>
+        <td><span class="market-tag">Gana Monterrey</span></td>
+        <td><strong>@2.10</strong></td>
         <td>$500.00</td>
-        <td>$925.00</td>
-        <td><span class="badge badge-won">✅ GANADA</span></td>
-        <td class="positive"><strong>+$425.00</strong></td>
+        <td>$1050.00</td>
+        <td><span class="badge badge-cashout">💵 CASH OUT</span></td>
+        <td class="negative"><strong>-$200.00</strong></td>
+      </tr>
+    
+
+      <tr>
+        <td><strong>#2</strong></td>
+        <td>30 ago, 01:06 p.m.</td>
+        <td>
+          <div class="event-title">Pumas vs Cruz Azul</div>
+          <div class="event-sub">Fútbol · N/D (Bet365)</div>
+        </td>
+        <td><span class="market-tag">Empate</span></td>
+        <td><strong>@3.20</strong></td>
+        <td>$500.00</td>
+        <td>$1600.00</td>
+        <td><span class="badge badge-cashout">💵 CASH OUT</span></td>
+        <td class="positive"><strong>+$100.00</strong></td>
       </tr>
     
         </tbody>

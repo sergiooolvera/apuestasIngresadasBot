@@ -33,6 +33,12 @@ function generateHtmlReport() {
       statusText = '⚪ ANULADA';
       profitText = `$0.00`;
       profitClass = 'neutral';
+    } else if (b.status === 'CASH_OUT') {
+      badgeClass = 'badge-cashout';
+      statusText = '💵 CASH OUT';
+      const pl = b.profit_loss || 0;
+      profitText = `${pl >= 0 ? '+' : '-'}$${Math.abs(pl).toFixed(2)}`;
+      profitClass = pl >= 0 ? 'positive' : 'negative';
     }
 
     const dateStr = b.placed_at ? new Date(b.placed_at).toLocaleDateString('es-MX', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/D';
@@ -104,6 +110,7 @@ function generateHtmlReport() {
     .badge-lost { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     .badge-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-void { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .badge-cashout { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
 
     .market-tag { background: #1e293b; padding: 3px 8px; border-radius: 6px; font-size: 12px; color: #38bdf8; }
     .positive { color: var(--green); }
